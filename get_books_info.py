@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import pymssql
 from bs4 import BeautifulSoup
 
 # The base URL to scrape at
@@ -78,8 +79,14 @@ def clean_dataframe(df):
 
 	return df
 
+def save_to_db(data):
+	"""Saves the content of a dataframe into the books database"""
+
+	conn = pymssql.connect(r"DESKTOP-9QVPUST\SQLEXPRESS", r"DESKTOP-9QVPUST\Vincent", "v5207062369V", "books")
+	cursor = conn.cursor(as_dict=True)
+
 # This dataframe will store all the book details
-books_df = pd.DataFrame()
+"""books_df = pd.DataFrame()
 
 for i in range(1, pages_to_scrape+1):
 
@@ -94,6 +101,13 @@ for i in range(1, pages_to_scrape+1):
 	print(f"{i} catalogue pages processed")
 
 clean_df = clean_dataframe(books_df)
-clean_df.to_csv("books_info.csv")
+clean_df.reset_index(inplace=True)
+clean_df.drop(columns=["index"], inplace=True)
+clean_df.to_csv("books_info.csv", sep="|")"""
+
+
+df = pd.read_csv("books_info.csv", sep="|")
+save_to_db(df)
+
 
 
